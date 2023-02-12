@@ -5,4 +5,5 @@ export const ProductSchema = new mongoose.Schema({
   name: String,
   price: String,
   sku: String,
+  product_to_category: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Category' }],
 });
