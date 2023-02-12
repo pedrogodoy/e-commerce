@@ -30,4 +30,8 @@ export class ProductsService {
 
     throw Error('ID necessário');
   }
+
+  async delete(id: string): Promise<Product[]> {
+    return this.productModel.findOneAndDelete({ product_id: id });
+  }
 }
