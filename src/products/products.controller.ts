@@ -8,6 +8,11 @@ import { UpdateProductDto } from './dto/update-product.dto';
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
+  @Post('/getProductsFromExternalApi')
+  async getProductsFromExternalAPi(): Promise<Product[]> {
+    return this.productsService.getProductsFromExternalAPi();
+  }
+
   @Post()
   async create(@Body() createProductDto: CreateProductDto) {
     return this.productsService.create(createProductDto);
