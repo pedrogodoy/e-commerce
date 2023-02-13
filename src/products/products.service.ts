@@ -1,4 +1,4 @@
-import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -81,6 +81,10 @@ export class ProductsService {
         new: true
       });
 
+      if(!updatedProduct) {
+        throw new NotFoundException("Produto não encontrado!");
+      }
+
       if (updateProductDto.product_to_category) {
         await this.productModel.findOneAndUpdate(filter, { product_to_category: [] }, {
           new: true
@@ -101,10 +105,15 @@ export class ProductsService {
       return updatedProduct;
     }
 
-    throw Error('ID necessário');
+    throw new InternalServerErrorException("Erro interno.");
   }
 
-  async delete(id: string): Promise<Product[]> {
-    return this.productModel.findOneAndDelete({ product_id: id });
+  async delete(product_id: string): Promise<Product> {
+    const product = await this.productModel.findByIdAndDelete({ product_id });
+    if (!product) {
+      throw new NotFoundException("Produto não encontrado!");
+    }
+
+    return product;
   }
 }
