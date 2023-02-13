@@ -44,17 +44,24 @@ export class ProductsService {
   }
 
   async create(createProductDto: CreateProductDto): Promise<Product> {
+    const { name, price, product_id, sku, product_to_category } = createProductDto;
     const createdProduct = await this.productModel.create({
-      ...createProductDto,
+      name,
+      price,
+      product_id,
+      sku
     });
 
-    const category = await this.categoryModel.create({ category_id: 124, name: "ACESSORIOS" });
+    if(createProductDto?.product_to_category.length > 0) {
+      
+      const category = await this.categoryModel.create(createProductDto.product_to_category) as unknown as [];
 
-    const product = await this.productModel.findOne({ product_id: createdProduct.product_id });
-    if (product) {
-      product.product_to_category.push(category);
-      product.save();
-      return product;
+      const product = await this.productModel.findOne({ product_id: createdProduct.product_id });
+      if (product) {
+        product.product_to_category.push(...category);
+        product.save();
+        return product;
+      }
     }
 
     return createdProduct;
@@ -64,14 +71,33 @@ export class ProductsService {
     return this.productModel.find().populate('product_to_category').exec();
   }
 
-  async update(id: string, updateProductDto: UpdateProductDto): Promise<Product> {
-    if (id) {
-      const filter = { product_id: id };
-      const update = { ...updateProductDto };
-     
+  async update(product_id: string, updateProductDto: UpdateProductDto): Promise<Product> {
+    if (product_id) {
+      const filter = { product_id };
+      let update = { ...updateProductDto };
+      delete update?.product_to_category;
+
       const updatedProduct = await this.productModel.findOneAndUpdate(filter, update, {
         new: true
       });
+
+      if (updateProductDto.product_to_category) {
+        await this.productModel.findOneAndUpdate(filter, { product_to_category: [] }, {
+          new: true
+        });
+
+        if(updateProductDto.product_to_category.length > 0) {
+          const category = await this.categoryModel.create(updateProductDto.product_to_category) as unknown as [];
+
+          const product = await this.productModel.findOne({ product_id });
+          if (product) {
+            product.product_to_category.push(...category);
+            product.save();
+            return product;
+          }
+        }
+      }
+
       return updatedProduct;
     }
 
