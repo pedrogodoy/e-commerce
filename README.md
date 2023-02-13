@@ -1,4 +1,4 @@
-### API de produtos
+# API de produtos
 
 ## Banco de dados
 Para rodar o projeto localmente, é necessário ter o mongodb instalado com uma base de dados chamada `ecommerce`. Para personalizar o caminho do banco acessar `src/database/database.providers.ts` no projeto:
