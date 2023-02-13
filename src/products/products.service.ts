@@ -71,6 +71,16 @@ export class ProductsService {
     return this.productModel.find().populate('product_to_category').exec();
   }
 
+  async findOne(product_id: string): Promise<Product> {
+    const product = await this.productModel.findOne({ product_id }).populate('product_to_category').exec();
+
+    if (!product) {
+      throw new NotFoundException("Produto não encontrado.");
+    }
+
+    return product;
+  }
+
   async update(product_id: string, updateProductDto: UpdateProductDto): Promise<Product> {
     if (product_id) {
       const filter = { product_id };
