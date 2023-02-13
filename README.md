@@ -1,38 +1,28 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+### API de produtos
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## Banco de dados
+Para rodar o projeto localmente, é necessário ter o mongodb instalado com uma base de dados chamada `ecommerce`. Para personalizar o caminho do banco acessar `src/database/database.providers.ts` no projeto:
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+```javascript
+export const databaseProviders = [
+  {
+    provide: 'DATABASE_CONNECTION',
+    useFactory: async (): Promise<typeof mongoose> =>
+      // Example: 'mongodb://localhost/ecommerce'
+      await mongoose.connect('URL_DA_SUA_BASE_DE_DADOS_AQUI'),
+  },
+];
+```
 
-## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Installation
+## Setup inicial
 
 ```bash
 $ npm install
 ```
 
-## Running the app
+
+## Iniciando a aplicação
 
 ```bash
 # development
@@ -40,34 +30,206 @@ $ npm run start
 
 # watch mode
 $ npm run start:dev
-
-# production mode
-$ npm run start:prod
 ```
 
-## Test
 
-```bash
-# unit tests
-$ npm run test
+## Documentação das rotas da API
 
-# e2e tests
-$ npm run test:e2e
+### Buscar produtos da API <a href="https://bitbucket.org/irrobaecommerce/workspace/snippets/yEABz5" target="_blank">externa</a> e salvar localmente.
 
-# test coverage
-$ npm run test:cov
+<strong>Tipo:</strong> POST <br>
+<strong>Path:</strong> <code>/products/getProductsFromExternalAPi</code> <br>
+<strong>Exemplo de retorno: </strong>
+```json
+[
+  {
+    "_id": "63e90583312255a7ddf77475",
+    "product_id": 4569,
+    "name": "Berço Americano Matic Bkids Off White Freijó Eco Wood",
+    "price": "1759.00",
+    "sku": "1759.00",
+    "product_to_category": [
+      {
+        "_id": "63e90583312255a7ddf77477",
+        "category_id": 124,
+        "name": "ACESSORIOS ",
+        "__v": 0
+      },
+      {
+        "_id": "63e90583312255a7ddf77478",
+        "category_id": 125,
+        "name": "COLEÇÃO SWEET",
+        "__v": 0
+      }
+    ],
+    "__v": 1
+  }
+]
 ```
 
-## Support
+### Criar produto
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+<strong>Tipo:</strong> POST <br>
+<strong>Path:</strong> <code>/products</code> <br>
+<strong>Body:</strong>
+```json
+{
+  "product_id": "6265",
+  "name": "produto de teste",
+  "price": "89,87",
+  "sku": "teste sku",
+  "product_to_category": [
+    { 
+    "category_id": 124,
+    "name": "ACESSORIOS" 
+    }
+  ]
+}
+```
 
-## Stay in touch
+#### Exemplo de retorno:
+```json
+{
+  "_id": "63ea142348eb4e7541cb49de",
+  "product_id": 6265,
+  "name": "produto de teste",
+  "price": "89,87",
+  "sku": "teste sku",
+  "product_to_category": [
+    {
+      "category_id": 124,
+      "name": "ACESSORIOS",
+      "_id": "63ea15dd01aa0982a980c0fe",
+      "__v": 0
+    }
+  ],
+  "__v": 0
+}
+```
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+### Listar um produto
 
-## License
+<strong>Tipo:</strong> GET <br>
+<strong>Path:</strong> <code>/products/:id</code> <br>
 
-Nest is [MIT licensed](LICENSE).
+#### Exemplo de retorno:
+```json
+{
+  "_id": "63e90583312255a7ddf77475",
+  "product_id": 4569,
+  "name": "produto atualizado",
+  "price": "89,87",
+  "sku": "teste sku atualizado",
+  "product_to_category": [
+    {
+      "_id": "63ea1253f76cd4f2a1d99535",
+      "category_id": 124,
+      "name": "ACESSORIOS",
+      "__v": 0
+    }
+  ],
+  "__v": 4
+}
+```
+
+### Listar todos os produtos
+
+<strong>Tipo:</strong> GET <br>
+<strong>Path:</strong> <code>/products</code> <br>
+
+#### Exemplo de retorno:
+```json
+[
+  {
+    "_id": "63e90583312255a7ddf77475",
+    "product_id": 4569,
+    "name": "produto atualizado",
+    "price": "89,87",
+    "sku": "teste sku atualizado",
+    "product_to_category": [
+      {
+        "_id": "63ea1253f76cd4f2a1d99535",
+        "category_id": 124,
+        "name": "ACESSORIOS Vindo Do DTO",
+        "__v": 0
+      }
+    ],
+    "__v": 4
+  },
+  {
+    "_id": "63e90584312255a7ddf77486",
+    "product_id": 4552,
+    "name": "CHINELO RIDER FREE DEDO ADULTO - CORES SORTIDAS",
+    "price": "35.90",
+    "sku": "35.90",
+    "product_to_category": [],
+    "__v": 1
+  }
+]
+```
+
+### Atualizar produto
+
+<strong>Tipo:</strong> PUT <br>
+<strong>Path:</strong> <code>/products</code> <br>
+<strong>Body:</strong>
+```json
+{
+  "product_id": "6265",
+  "name": "produto atualizado",
+  "price": "89,87",
+  "sku": "teste sku",
+  "product_to_category": [
+    { 
+    "category_id": 124,
+    "name": "ACESSORIOS" 
+    }
+  ]
+}
+```
+
+#### Exemplo de retorno:
+```json
+{
+  "_id": "63ea142348eb4e7541cb49de",
+  "product_id": 6265,
+  "name": "produto de teste",
+  "price": "89,87",
+  "sku": "teste sku",
+  "product_to_category": [
+    {
+      "category_id": 124,
+      "name": "ACESSORIOS",
+      "_id": "63ea15dd01aa0982a980c0fe",
+      "__v": 0
+    }
+  ],
+  "__v": 0
+}
+```
+
+
+### Apagar um produto
+
+<strong>Tipo:</strong> GET <br>
+<strong>Path:</strong> <code>/products/:id</code> <br>
+
+#### Exemplo de retorno:
+```json
+{
+  "_id": "63e90583312255a7ddf77475",
+  "product_id": 4569,
+  "name": "produto apagado",
+  "price": "89,87",
+  "sku": "teste sku apagado",
+  "product_to_category": [
+    {
+      "_id": "63ea1253f76cd4f2a1d99535",
+      "category_id": 124,
+      "name": "ACESSORIOS",
+      "__v": 0
+    }
+  ],
+  "__v": 4
+}
+```
